@@ -82,14 +82,40 @@ By completing all the instructions of this project, at the end of it, you will h
 - 1.1.7 All containers must expose the port `80`
 - 1.1.8 All containers should execute the following command: `node app.js` in run time
 
+RESULT:
+###################################################################
+# This is templating file of Dockerfile. It will help you to      #
+# complete all required instructions for building the Dockerfile. #
+###################################################################
+
+# 1.1.1 | Use the following base image "node:17.0-alpine3.14"
+FROM node:17.0-alpine3.14
+# 1.1.2 | Working directory inside the containers should be "/app"
+WORKDIR /app
+# 1.1.3 | Copy "package*.json" file(s) to working directory
+COPY package*.json /app
+# 1.1.4 | Install "npm=7.17.0-r0" package manager, then install dependency packages
+#Alphine Linux usa apk no apt-get
+RUN apk update && apk upgrade && npm install -g npm@7.17.0 && npm install 
+# 1.1.5 | Copy "app.js" file to working directory
+COPY app.js /app
+# 1.1.6 | Copy the "index.pug" and "favicon.ico" files to the "/app/views" directory
+COPY index.pug /app/views
+COPY favicon.ico /app/views
+# 1.1.7 | The port "80" should be exposed by the container
+EXPOSE 80
+# 1.1.8 | The container must execute the command "node app.js" in run time
+CMD ["node", "app.js"]
 
 1.2 Build Docker images for each web app, with following namings:
 - trafficlight/red:v1.0
 - trafficlight/yellow:v1.0
 - trafficlight/green:v1.0
+docker build -t _nombreRed__ trafficlight/_CarpetaApp_      
 
 ### :two: Task2: Running web apps behind Nginx reverse proxy
 2.1 Create a docker network with name `traffic-light`, and assign the `172.20.0.1` as a gateway address with `/16` prefix length.
+docker network create --subnet=172.20.0.0/16 traffic-light //tenemos que especificar la IP con la subnet
 
 2.2 By using the created images, run containers with following requirements:
 - assign the appropriate names: `red-app`, `yellow-app` and `green-app` to containers
