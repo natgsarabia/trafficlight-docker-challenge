@@ -98,16 +98,22 @@ CMD ["node", "app.js"]
 - trafficlight/red:v1.0
 - trafficlight/yellow:v1.0
 - trafficlight/green:v1.0
-docker build -t _nombreRed__ trafficlight/_CarpetaApp_      
+
+COMANDO: docker build -t _nombreRed__ trafficlight/_CarpetaApp_      
 
 ### :two: Task2: Running web apps behind Nginx reverse proxy
 2.1 Create a docker network with name `traffic-light`, and assign the `172.20.0.1` as a gateway address with `/16` prefix length.
-docker network create --subnet=172.20.0.0/16 traffic-light //tenemos que especificar la IP con la subnet
+
+COMANDO: docker network create --subnet=172.20.0.0/16 traffic-light //tenemos que especificar la IP con la subnet
 
 2.2 By using the created images, run containers with following requirements:
 - assign the appropriate names: `red-app`, `yellow-app` and `green-app` to containers
+  COMANDO : docker run -dp 3002:80 -v "%cd%/red:/var/www/html" red
+Cambiando el puerto en cada ocasion
+
 
 - assign the network `traffic-light` to all containers
+
 
 2.3 Pull the image `nginx:1.21` then run a container with the following requirements:
 - assign the name `nginx-proxy` to the container
