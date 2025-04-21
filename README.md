@@ -104,17 +104,16 @@ COMANDO: docker build -t _nombreRed__ trafficlight/_CarpetaApp_
 ### :two: Task2: Running web apps behind Nginx reverse proxy
 2.1 Create a docker network with name `traffic-light`, and assign the `172.20.0.1` as a gateway address with `/16` prefix length.
 
-COMANDO: docker network create --subnet=172.20.0.0/16 traffic-light //tenemos que especificar la IP con la subnet
+COMANDO: docker network create --subnet=172.20.0.0/16 --gateway=172.20.0.1 traffic-light 
+//tenemos que especificar la IP con la subnet y el gateway para que sea 1
 
 2.2 By using the created images, run containers with following requirements:
 - assign the appropriate names: `red-app`, `yellow-app` and `green-app` to containers
-  COMANDO : docker run -dp 3002:80 -v "%cd%/red:/var/www/html" red
-Cambiando el puerto en cada ocasion
-
 
 - assign the network `traffic-light` to all containers
 
-
+  COMANDO : docker run -d --name red-app --network traffic-light -v "$(pwd)\red:/var/www/html" red 
+  
 2.3 Pull the image `nginx:1.21` then run a container with the following requirements:
 - assign the name `nginx-proxy` to the container
 
@@ -123,6 +122,27 @@ Cambiando el puerto en cada ocasion
 - mount the path `~/nginx/conf.d/` of the host to the path `/etc/nginx/conf.d/` of the container - for managing configurations from your machine
 
 - the `nginx-proxy` container must listen to the following ports: `3000`, `4000` and `5000`. The mentioned ports should map to the web apps as follows: (3000 -> red-app, 4000 -> yellow-app, 5000 -> green-app). ***:bulb: This point must be implemented via [nginx_proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html)***.
+
+PASOS:
+//Descargamos ngix con el comando: docker pull nginx:1.21
+
+//creamos la carpeta nginx con la subcarpeta conf.d. Dentro de esta hacemos el archivo default.conf
+donde escribiremos la que este servidor pueda recibir todas las apps
+server {
+    listen 3000;
+    location / {
+        proxy_pass http://red-app:80;
+    }
+}
+Y lo mismo para las otras dos aplicaciones
+
+//Ejecutamos este nuevo contenedor, indicandole el nombre ngix-proxy, la misma red que nuestras aplicaciones 
+y en vez de indicarle la carpeta creada le damos el nombre de la imagen descargada (ngix) para que la monte sobre él
+docker run -dp 3000:3000 -p 4000:4000 -p 5000:5000 (Todos los puertos de las aplicaciones)
+--name nginx-proxy (nombre del proxy)
+--network traffic-light (indicamos la red)
+-v "$(pwd)/nginx/conf.d:/etc/nginx/conf.d"(carpeta local y donde queremos que la copie en docker)
+nginx:1.21 (la imagen sobre la que queremos que se construya este nuevo container)
 
 If you have done all points of the Task2 correctly, by opening e.g. the link http://127.0.0.1:3000 on your browser, you should see the `red-app` page. The rest web apps should work with the same logic.
 
