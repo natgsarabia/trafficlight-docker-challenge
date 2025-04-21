@@ -1,0 +1,28 @@
+LEVANTAR EL PROXY TASCA 1
+Paso 1: levantar las imagenes
+docker run -d --name red-app --network traffic-light -v "$(pwd)\red:/var/www/html" red
+docker run -d --name yellow-app --network traffic-light -v "$(pwd)\yellow:/var/www/html" yellow
+docker run -d --name green-app --network traffic-light -v "$(pwd)\green:/var/www/html" green   
+
+Paso 3: Descomentar de  ngix/conf.d/default.conf proxy y comentar la del balanceador
+
+Paso 2: levantar el contenedor con todos los puertos
+docker run -dp 3000:3000 -p 4000:4000 -p 5000:5000 --name nginx-proxy --network traffic-light -v "$(pwd)/nginx/conf.d:/etc/nginx/conf.d" nginx:1.21
+
+Podremos acceder a las app desde localhost:3000, localhost:4000 y localhost:5000
+
+
+LEVANTAR EL BALANCEADOR
+Paso 1: Aseguramos que todos los contenedores anteriores están parados y eliminados para evitar conflictos
+docker stop nginx-proxy  
+docker rm nginx-proxy 
+(...igual para las apps...)
+
+Paso 2: Descomentar de  ngix/conf.d/default.conf la sección del balanceador y comentar la del proxy
+
+Paso 3: Levantamos el servicio del balanceador
+docker-compose up -d             
+
+Podremos acceder al servicio desde localhost y cada vez que accedamos nos sirve una app
+
+Para eliminar el servicio solo deberemos hacer docker-compose down

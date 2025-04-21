@@ -113,7 +113,7 @@ COMANDO: docker network create --subnet=172.20.0.0/16 --gateway=172.20.0.1 traff
 - assign the network `traffic-light` to all containers
 
   COMANDO : docker run -d --name red-app --network traffic-light -v "$(pwd)\red:/var/www/html" red 
-  
+
 2.3 Pull the image `nginx:1.21` then run a container with the following requirements:
 - assign the name `nginx-proxy` to the container
 
@@ -146,10 +146,21 @@ nginx:1.21 (la imagen sobre la que queremos que se construya este nuevo containe
 
 If you have done all points of the Task2 correctly, by opening e.g. the link http://127.0.0.1:3000 on your browser, you should see the `red-app` page. The rest web apps should work with the same logic.
 
+
+TAREA 2 DEL TRABAJO
 ### :three: Task3: Running web apps with Nginx load balancing
 3.1 Run services via Docker Compose with the following requirements by using the web apps' images that you've built:
 - define the following services: `red-app`, `yellow-app`, `green-app` and `nginx-load-balancer` in docker-compose.yml file
 - all the services must share the `traffic-light` network
+
+//creamos en la carpeta raiz un archivo docker-compose.yml con la informacion de los tres apps que hemos creado
+services:
+  red-app:
+    image: red (nombre carpeta donde tenemos la imagen)
+    container_name: red-app (nombre container)
+    networks:
+      -traffic-light (red)
+y lomismo para las otras dos
 
 3.2 For the `nginx-load-balancer` service mount the paths from the host to the container as follows:
 
@@ -158,6 +169,24 @@ If you have done all points of the Task2 correctly, by opening e.g. the link htt
 - `/var/log/nginx/ -> /var/log/nginx/` - by making the Nginx logs accessible on the host
 
 - expose the port `80` for the `nginx-load-balancer` service
+
+//Despues de definir los servicios de las apps definimos el servicio del balanceador donde serviremos las tres paginas
+ nombre balanceador:
+      image: (imagen sobre la que montaremos el contenedor)
+      container_name: (nombre)
+      ports: (puerto sobre el que serviremos )
+      volumes:(path de configuracion y logs, y donde los replicaremos en docker)
+      networks: (nombre red sobre la que lo montamos)
+
+//Por ultimo definimos la red con networks: (a la red diremos external:true para definir que no debemos de crear una red nueva)
+
+deberemos ajustar el archivo default.conf para que nos sirva las apps bajo la misma url
+para conseguirlo definiremos un upstream con el nombre que queramos y todos los servicios que debe de servir
+upstream nombre {server app:80; server app2:80...}
+
+y después definiremos el server con el puerto, y como location indicaremos el upstream anterior
+
+levantaremos el servicio son docker-compose up -d
 
 3.3 Make load balancing of request for the all services. ***:bulb: This point must be implemented via [Nginx HTTP Load Balancing](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/).***
 
