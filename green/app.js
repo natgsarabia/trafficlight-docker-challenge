@@ -53,6 +53,7 @@ app.use(function(err, req, res, _next) {
     if (err instanceof IpDeniedError) {
         res.setHeader("Content-Type", "text/html");
         res.write("<p>Access Denied</p>");
+        alert("Access Denied: "+err.message);
         res.end();
     }
 });

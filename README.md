@@ -99,7 +99,7 @@ CMD ["node", "app.js"]
 - trafficlight/yellow:v1.0
 - trafficlight/green:v1.0
 
-COMANDO: docker build -t _nombreRed__ trafficlight/_CarpetaApp_      
+COMANDO: docker build -t trafficlight/_CarpetaApp_      
 
 ### :two: Task2: Running web apps behind Nginx reverse proxy
 2.1 Create a docker network with name `traffic-light`, and assign the `172.20.0.1` as a gateway address with `/16` prefix length.
