@@ -1,19 +1,25 @@
 services:
   # APPS
   red-app:
-    image: red
+    build:
+      context: ./red
+      dockerfile: Dockerfile
     container_name: red-app
     networks:
       - traffic-light
 
   yellow-app:
-    image: yellow
+    build:
+      context: ./yellow
+      dockerfile: Dockerfile
     container_name: yellow-app
     networks:
       - traffic-light
 
   green-app:  
-    image: green
+    build:
+      context: ./green
+      dockerfile: Dockerfile
     container_name: green-app
     networks:
       - traffic-light
